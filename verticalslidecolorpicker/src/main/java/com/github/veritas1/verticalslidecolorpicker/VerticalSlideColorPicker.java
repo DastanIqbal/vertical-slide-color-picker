@@ -51,7 +51,7 @@ public class VerticalSlideColorPicker extends View {
 		try {
 			borderColor = a.getColor(R.styleable.VerticalSlideColorPicker_borderColor, Color.WHITE);
 			borderWidth = a.getDimension(R.styleable.VerticalSlideColorPicker_borderWidth, 10f);
-			int colorsResourceId = a.getResourceId(R.styleable.VerticalSlideColorPicker_colors, R.array.default_colors);
+			int colorsResourceId = a.getResourceId(R.styleable.VerticalSlideColorPicker_colors, R.array.vscp_default_colors);
 			colors = a.getResources().getIntArray(colorsResourceId);
 		} finally {
 			a.recycle();

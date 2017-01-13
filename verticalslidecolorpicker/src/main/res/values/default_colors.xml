@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<array name="default_colors">
+	<array name="vscp_default_colors">
 		<item>#ff0000</item>
 		<item>#ffff00</item>
 		<item>#00ffff</item>
