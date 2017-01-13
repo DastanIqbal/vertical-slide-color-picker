@@ -1,11 +1,13 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 
+//version='1.0.2'
 group='com.github.nll'
+archivesBaseName='vertical-slide-color-picker'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "23.0.3"
+    buildToolsVersion "24.0.3"
 
     defaultConfig {
         minSdkVersion 9

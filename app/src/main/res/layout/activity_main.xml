@@ -17,9 +17,9 @@
 		android:id="@+id/color_picker"
 		android:layout_width="30dp"
 		android:layout_height="100dp"
-		colorpicker:borderColor="#000"
-		colorpicker:borderWidth="2dp"
-		colorpicker:colors="@array/vscp_default_colors"/>
+		colorpicker:vBorderColor="#000"
+		colorpicker:vBorderWidth="2dp"
+		colorpicker:vColors="@array/vscp_default_colors"/>
 
     <TextView
 	    android:layout_width="wrap_content"
