@@ -4,5 +4,6 @@
 		<attr name="vBorderColor" format="color" />
 		<attr name="vBorderWidth" format="dimension" />
 		<attr name="vColors" format="reference" />
+		<attr name="vDefaultColor" format="color" />
 	</declare-styleable>
 </resources>

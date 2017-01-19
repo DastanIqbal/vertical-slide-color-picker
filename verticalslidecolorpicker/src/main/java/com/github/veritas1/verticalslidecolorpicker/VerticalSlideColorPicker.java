@@ -1,5 +1,6 @@
 package com.github.veritas1.verticalslidecolorpicker;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -10,6 +11,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.Shader;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -35,6 +37,9 @@ public class VerticalSlideColorPicker extends View {
 	private int borderColor;
 	private float borderWidth;
 	private int[] colors;
+	private int defaultColor = Color.TRANSPARENT;
+	private int selectedColor = defaultColor;
+	private boolean selectorYPosNeedsUpdate;
 	private boolean cacheBitmap = true;
 
 	public VerticalSlideColorPicker(Context context) {
@@ -54,6 +59,7 @@ public class VerticalSlideColorPicker extends View {
 			borderWidth = a.getDimension(R.styleable.VerticalSlideColorPicker_vBorderWidth, 5f);
 			int colorsResourceId = a.getResourceId(R.styleable.VerticalSlideColorPicker_vColors, R.array.vscp_default_colors);
 			colors = a.getResources().getIntArray(colorsResourceId);
+			defaultColor = a.getColor(R.styleable.VerticalSlideColorPicker_vDefaultColor, defaultColor);
 		} finally {
 			a.recycle();
 		}
@@ -65,6 +71,7 @@ public class VerticalSlideColorPicker extends View {
 		init();
 	}
 
+	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 	public VerticalSlideColorPicker(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
 		super(context, attrs, defStyleAttr, defStyleRes);
 		init();
@@ -87,6 +94,8 @@ public class VerticalSlideColorPicker extends View {
 		selectorStrokePaint = new Paint(strokePaint);
 
 		setDrawingCacheEnabled(true);
+
+		setColor(defaultColor);
 	}
 
 	@Override
@@ -99,7 +108,11 @@ public class VerticalSlideColorPicker extends View {
 		if (cacheBitmap) {
 			bitmap = getDrawingCache();
 			cacheBitmap = false;
-			invalidate();
+			if(selectorYPosNeedsUpdate) {
+				updateSelectedY();
+			} else {
+				invalidate();
+			}
 		} else {
 			canvas.drawLine(colorPickerBody.left + borderWidth/2, selectorYPos, colorPickerBody.right - borderWidth/2, selectorYPos, selectorStrokePaint);
 		}
@@ -112,10 +125,9 @@ public class VerticalSlideColorPicker extends View {
 		yPos = Math.max(colorPickerBody.top, yPos);
 
 		selectorYPos = yPos;
-		int selectedColor = bitmap.getPixel(viewWidth/2, (int) selectorYPos);
+		selectedColor = bitmap.getPixel(viewWidth/2, (int) selectorYPos);
 
-		int scaleValue = 255 - (int) (calculateLuminance(selectedColor) * 255);
-		selectorStrokePaint.setColor(Color.rgb(scaleValue, scaleValue, scaleValue));
+		updateSelectorAlpha();
 
 		if (onColorChangeListener != null) {
 			onColorChangeListener.onColorChange(selectedColor);
@@ -204,13 +216,47 @@ public class VerticalSlideColorPicker extends View {
 	}
 
 	public void resetToDefault() {
-		selectorYPos = borderWidth + colorPickerRadius;
+		selectedColor = defaultColor;
+
+		updateSelectedY();
 
 		if (onColorChangeListener != null) {
-			onColorChangeListener.onColorChange(Color.TRANSPARENT);
+			onColorChangeListener.onColorChange(defaultColor);
 		}
 
 		invalidate();
+	}
+
+	private void updateSelectedY() {
+		if(bitmap == null) {
+			selectorYPosNeedsUpdate = true;
+			return;
+		}
+
+		selectorYPosNeedsUpdate = false;
+		int i;
+		for (i = 0; i < colors.length; i++) {
+			if(colors[i] == selectedColor) {
+				break;
+			}
+		}
+
+		if(i < colors.length) {
+			selectorYPos = colorPickerBody.top + (colorPickerBody.bottom - colorPickerBody.top) / (colors.length - 1) * i;
+		}
+	}
+
+	private void updateSelectorAlpha() {
+		int scaleValue = 255 - (int) (calculateLuminance(selectedColor) * 255);
+		selectorStrokePaint.setColor(Color.rgb(scaleValue, scaleValue, scaleValue));
+	}
+
+	private void setColor(int color) {
+		if(selectedColor != color) {
+			selectedColor = color;
+			updateSelectedY();
+			updateSelectorAlpha();
+		}
 	}
 
 	public void setOnColorChangeListener(OnColorChangeListener onColorChangeListener) {
