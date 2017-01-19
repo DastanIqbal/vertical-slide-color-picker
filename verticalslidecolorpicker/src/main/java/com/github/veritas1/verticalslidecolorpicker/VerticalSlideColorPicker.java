@@ -26,7 +26,7 @@ public class VerticalSlideColorPicker extends View {
 	private Bitmap bitmap;
 	private int viewWidth;
 	private int viewHeight;
-	private int centerX;
+	private float centerX;
 	private float colorPickerRadius;
 	private OnColorChangeListener onColorChangeListener;
 	private RectF colorPickerBody;
@@ -50,7 +50,7 @@ public class VerticalSlideColorPicker extends View {
 
 		try {
 			borderColor = a.getColor(R.styleable.VerticalSlideColorPicker_vBorderColor, Color.WHITE);
-			borderWidth = a.getDimension(R.styleable.VerticalSlideColorPicker_vBorderWidth, 10f);
+			borderWidth = a.getDimension(R.styleable.VerticalSlideColorPicker_vBorderWidth, 5f);
 			int colorsResourceId = a.getResourceId(R.styleable.VerticalSlideColorPicker_vColors, R.array.vscp_default_colors);
 			colors = a.getResources().getIntArray(colorsResourceId);
 		} finally {
@@ -91,12 +91,8 @@ public class VerticalSlideColorPicker extends View {
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 
-		path.addCircle(centerX, borderWidth + colorPickerRadius, colorPickerRadius, Path.Direction.CW);
-		path.addRect(colorPickerBody, Path.Direction.CW);
-		path.addCircle(centerX, viewHeight - (borderWidth + colorPickerRadius), colorPickerRadius, Path.Direction.CW);
-
-		canvas.drawPath(path, strokePaint);
 		canvas.drawPath(path, paint);
+		canvas.drawPath(path, strokePaint);
 
 		if (cacheBitmap) {
 			bitmap = getDrawingCache();
@@ -132,15 +128,44 @@ public class VerticalSlideColorPicker extends View {
 		viewWidth = w;
 		viewHeight = h;
 
-		centerX = viewWidth/2;
+		centerX = viewWidth / 2;
+
 		colorPickerRadius = (viewWidth/2) - borderWidth;
 
-		colorPickerBody = new RectF(centerX - colorPickerRadius, borderWidth + colorPickerRadius, centerX + colorPickerRadius, viewHeight - (borderWidth + colorPickerRadius));
+		colorPickerBody = new RectF(centerX - colorPickerRadius, borderWidth + colorPickerRadius,
+				       centerX + colorPickerRadius, viewHeight - (borderWidth + colorPickerRadius));
 
-		LinearGradient gradient = new LinearGradient(0, colorPickerBody.top, 0, colorPickerBody.bottom, colors, null, Shader.TileMode.CLAMP);
-		paint.setShader(gradient);
+		updatePath();
+		updatePaint();
 
 		resetToDefault();
+	}
+
+	private void updatePaint() {
+		// some old versions of AS preview only supports 2 colors linear gradients
+		LinearGradient gradient = new LinearGradient(
+				0, colorPickerBody.top,
+				0, colorPickerBody.bottom,
+				colors, null, Shader.TileMode.CLAMP);
+
+		paint.setShader(gradient);
+	}
+
+	private void updatePath() {
+		float centerTopY = borderWidth + colorPickerRadius;
+		float centerBottomY = viewHeight - (borderWidth + colorPickerRadius);
+
+		path.reset();
+		path.moveTo(centerX-colorPickerRadius, centerBottomY);
+		path.lineTo(centerX-colorPickerRadius, centerTopY);
+		path.arcTo(new RectF(centerX-colorPickerRadius, centerTopY-colorPickerRadius,
+				centerX+colorPickerRadius, centerTopY+colorPickerRadius),
+				180, 180, false);
+		path.lineTo(centerX + colorPickerRadius, centerBottomY);
+		path.arcTo(new RectF(centerX-colorPickerRadius, centerBottomY-colorPickerRadius,
+				centerX+colorPickerRadius, centerBottomY+colorPickerRadius),
+				0, 180, false);
+		path.close();
 	}
 
 	public void setBorderColor(int borderColor) {
