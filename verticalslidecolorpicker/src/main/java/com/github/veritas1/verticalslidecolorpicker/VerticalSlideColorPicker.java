@@ -243,7 +243,9 @@ public class VerticalSlideColorPicker extends View {
 
 		if(i < colors.length) {
 			selectorYPos = colorPickerBody.top + (colorPickerBody.bottom - colorPickerBody.top) / (colors.length - 1) * i;
-		}
+		} else {
+            selectorYPos = colorPickerBody.top;
+        }
 	}
 
 	private void updateSelectorAlpha() {
