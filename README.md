@@ -1,18 +1,18 @@
 # Vertical Slide Color Picker
 
-![Demo gif](https://drive.google.com/uc?export=download&id=0B4_9eDf8wHFJNEZWWXlzQmdtZnM)
+![Demo gif](https://github.com/DastanIqbal/vertical-slide-color-picker/blob/master/output.gif)
 
-## Example usage
+## Vertical Color Picker Example usage
 
 layout.xml
 ```XML
 <com.github.veritas1.verticalslidecolorpicker.VerticalSlideColorPicker
-		android:id="@+id/color_picker"
-		android:layout_width="30dp"
-		android:layout_height="100dp"
-		colorpicker:borderColor="@android:color/black"
-		colorpicker:borderWidth="2dp"
-		colorpicker:colors="@array/my_color_array"/>
+            android:id="@+id/color_picker"
+            android:layout_width="30dp"
+            android:layout_height="100dp"
+            colorpicker:borderColor="@android:color/black"
+            colorpicker:borderWidth="2dp"
+            colorpicker:colors="@array/my_color_array"/>
 ```
 
 Activity.java
@@ -21,24 +21,32 @@ final VerticalSlideColorPicker colorPicker = (VerticalSlideColorPicker) findView
 final View selectedColorView = findViewById(R.id.selected_color);
 
 colorPicker.setOnColorChangeListener(new VerticalSlideColorPicker.OnColorChangeListener() {
-	@Override
-	public void onColorChange(int selectedColor) {
-		selectedColorView.setBackgroundColor(selectedColor);
-	}
+    @Override
+    public void onColorChange(int selectedColor) {
+        selectedColorView.setBackgroundColor(selectedColor);
+    }
 });
 ```
-## Add to project
-Add it in your root build.gradle at the end of repositories:
-```Groovy
-allprojects {
-	repositories {
-		...
-		maven { url "https://jitpack.io" }
-	}
-}
+
+## Horizontal Color Picker Example usage
+layout.xml
+```XML
+<com.github.veritas1.HorizontalSlideColorPicker
+        android:id="@+id/color_hpicker"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
 ```
-```Groovy
-dependencies {
-	compile 'com.github.nll:vertical-slide-color-picker:$VERSION' // Check releases
-}
+
+Activity.java
+```Java
+final HorizontalSlideColorPicker colorPickerH = (HorizontalSlideColorPicker) findViewById(R.id.color_hpicker);
+final View selectedColorViewH = findViewById(R.id.selected_hcolor);
+
+colorPickerH.setOnColorChangedListener(new HorizontalSlideColorPicker.OnColorChangedListener() {
+    @Override
+    public void onColorChanged(String color) {
+        selectedColorViewH.setBackgroundColor(Color.parseColor(color));
+
+    }
+});
 ```
