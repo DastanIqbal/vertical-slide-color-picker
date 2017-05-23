@@ -39,6 +39,6 @@ allprojects {
 ```
 ```Groovy
 dependencies {
-	compile 'com.github.veritas1:verticalslidecolorpicker:$VERSION' // Check releases
+	compile 'com.github.nll:vertical-slide-color-picker:$VERSION' // Check releases
 }
 ```
