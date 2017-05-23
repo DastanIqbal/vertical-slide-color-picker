@@ -1,6 +1,6 @@
-# Vertical Slide Color Picker
+# Slider Color Picker
 
-![Demo gif](https://github.com/DastanIqbal/vertical-slide-color-picker/blob/master/output.gif)
+<img src="https://github.com/DastanIqbal/vertical-slide-color-picker/blob/master/output.gif" width=300/>
 
 ## Vertical Color Picker Example usage
 
